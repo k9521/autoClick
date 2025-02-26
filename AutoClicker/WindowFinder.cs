@@ -110,14 +110,13 @@ namespace autoClicker
 
         public static Point SetWindowToMatchAppPosition(string appName)
         {
-            Mouse mouse = new Mouse(appName);
-            Point orgLoc = mouse.GetNonRelativeMousePosition().Value;
-            Point p = new Point(0, 0);
-            mouse.MoveMouse(ref p);
-            //TODO: Update to do not use MoveMouse to estimate location of APP!!!
-            Point loc = mouse.GetNonRelativeMousePosition().Value;
-            mouse.MoveNonRelativeMouse(orgLoc);
-            return loc;
+            var position = WindowPositionFinder.GetWindowPositionByTitle(appName);
+            if (!position.HasValue)
+            {
+                return new Point(0, 0);
+            }
+            return new Point(position.Value.Left, position.Value.Top);
+
 
         }
 

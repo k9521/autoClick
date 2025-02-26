@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -30,7 +31,8 @@ namespace autoClicker
             mouse = new Mouse(AppName);
             editor = new ClickParametersEditor(this, AppName);
             overlayForm = new OverlayForm(AppName);
-
+            overlayForm.Ycorrection = 30;
+            overlayForm.Xcorrection = 10;
             clickerList = new ClickerList("data");
             UpdateSavedList();
             autoClicker = new AutoClicker();
@@ -126,6 +128,7 @@ namespace autoClicker
         public void UpdatedPoint(List<ClickParameters> recordList)
         {
             Point settingSize = WindowFinder.CreateWindowParam(AppName).Start.Value;
+            this.recordList = recordList;
             showPoint(recordList, null, settingSize, true);
 
         }
@@ -228,6 +231,32 @@ namespace autoClicker
                 buttonCancel.Enabled = false;
                 overlayForm.changeTimer(true);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var position = WindowPositionFinder.GetWindowPositionByTitle(AppName);
+            if (position.HasValue)
+            {
+                Console.WriteLine($"Pozycja okna: {position.Value}");
+                Mouse.MoveNonRelativeMouse(new Point(position.Value.Left, position.Value.Top));
+            }
+            else
+            {
+                Console.WriteLine("Aplikacja nie została znaleziona lub okno jest niewidoczne.");
+            }
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            overlayForm.Xcorrection = trackBar1.Value;//10
+            overlayForm.drawPoint(recordList);
+        }
+
+        private void trackBar2_Scroll(object sender, EventArgs e)
+        {
+            overlayForm.Ycorrection = trackBar2.Value;
+            overlayForm.drawPoint(recordList);
         }
 
         public void ShowPoints(bool isShowPoints)

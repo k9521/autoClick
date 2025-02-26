@@ -166,7 +166,7 @@ namespace autoClicker
             }
         }
 
-        public void MoveNonRelativeMouse(System.Drawing.Point point)
+        public static void MoveNonRelativeMouse(System.Drawing.Point point)
         {
             if (!SetCursorPos(point.X, point.Y))
             {

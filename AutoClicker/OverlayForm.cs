@@ -16,6 +16,8 @@ namespace autoClicker
         private readonly Pen drawingMovePen = new Pen(Color.Green, 1);
         private readonly Pen drawingRNDClick = new Pen(Color.Blue, 2);
         private static readonly int SIZE_OF_CROSS = 5;
+        public int Xcorrection { get; set; }
+        public int Ycorrection { get; set; }
 
         public OverlayForm(string appName)
         {
@@ -60,8 +62,8 @@ namespace autoClicker
         public void UpdateLocation()
         {
             Point loc = WindowFinder.SetWindowToMatchAppPosition(AppName);
-            this.Top = loc.Y;
-            this.Left = loc.X;
+            this.Top = loc.Y + Ycorrection;
+            this.Left = loc.X + Xcorrection;
         }
 
         public void drawPoint(List<ClickParameters> listParameters)
@@ -123,20 +125,20 @@ namespace autoClicker
                 appPosition = WindowFinder.SetWindowToMatchAppPosition(AppName);
                 cords = WindowFinder.GetWindowPosition(AppName);
 
-                if (this.Top == appPosition.Y &&
-                    this.Left == appPosition.X &&
+                if (this.Top == appPosition.Y + Ycorrection &&
+                    this.Left == appPosition.X + Xcorrection &&
                     this.Width == cords.Value.Right - cords.Value.Left &&
                     this.Height == cords.Value.Bottom - cords.Value.Top)
                 {
-                    //this.Show();
-                } else if ((this.Top != appPosition.Y ||
-                    this.Left != appPosition.X) &&
+                    this.Show();
+                } else if ((this.Top != appPosition.Y + +Ycorrection ||
+                    this.Left != appPosition.X + Xcorrection ) &&
                     (this.Width == cords.Value.Right - cords.Value.Left &&
                     this.Height == cords.Value.Bottom - cords.Value.Top))
                 {
-                    this.Top = appPosition.Y;
-                    this.Left = appPosition.X;
-                    //this.Show();
+                    this.Top = appPosition.Y + Ycorrection;
+                    this.Left = appPosition.X + Xcorrection;
+                    this.Show();
                 } else if (this.Width != cords.Value.Right - cords.Value.Left ||
                     this.Height != cords.Value.Bottom - cords.Value.Top)
                 {
