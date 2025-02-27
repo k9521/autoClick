@@ -18,13 +18,14 @@ namespace autoClicker
         {
             this.FilePathData = filePath + ".txt";
             this.FilePathWindowParam = filePath + "WindowParam.txt";
-            try {
+            try
+            {
                 LoadFromFile();
             }
             catch (Exception ex)
             {
             }
-            
+
         }
 
         public void SaveToFile()
@@ -41,7 +42,7 @@ namespace autoClicker
 
         public List<String> AllKeys()
         {
-            if(Items.Count == 0)
+            if (Items.Count == 0)
             {
                 return null;
             }

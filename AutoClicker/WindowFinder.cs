@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace autoClicker
 {
@@ -106,7 +106,7 @@ namespace autoClicker
             StringBuilder builder = new StringBuilder(length + 1);
             GetWindowText(handle, builder, builder.Capacity);
             return builder.ToString();
-        }      
+        }
 
         public static Point SetWindowToMatchAppPosition(string appName)
         {

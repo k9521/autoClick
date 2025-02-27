@@ -10,7 +10,7 @@ namespace autoClicker
         public Point? Start { get; set; }
         public Point? End { get; set; }
         public bool Slide { get; set; }
-        public int RNDPoint{ get; set; }
+        public int RNDPoint { get; set; }
         public int WaitDurationTime { get; set; }
         public int WaitAfterTime { get; set; }
         public int WaitRNDAfterTime { get; set; }

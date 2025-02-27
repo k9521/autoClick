@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +20,6 @@ namespace autoClicker
         AutoClicker autoClicker;
         private CancellationTokenSource cts;
         private bool isRunning = false;
-        IntPtr hWnd;
 
         public MainForm()
         {
@@ -39,7 +37,7 @@ namespace autoClicker
             buttonRunInfinity.Click += ButtonRunAutoClicker;
             buttonRunX.Click += ButtonRunAutoClicker;
             buttonRunUntilTime.Click += ButtonRunAutoClicker;
-            
+
         }
 
         private void buttonRecord_Click(object sender, EventArgs e)
@@ -54,7 +52,9 @@ namespace autoClicker
                 editor.RemoveAllItem();
                 overlayForm.Clean();
                 timerRecord.Enabled = true;
-            } else {
+            }
+            else
+            {
                 buttonRecord.Text = "Record";
                 timerRecord.Enabled = false;
                 fixRecordedList();
@@ -69,7 +69,7 @@ namespace autoClicker
             ClickParameters windowParam = WindowFinder.CreateWindowParam(AppName);
             foreach (ClickParameters clickParameters in recordList)
             {
-                if(clickerList.PointInScope(clickParameters.Start, windowParam) && clickerList.PointInScope(clickParameters.End, windowParam))
+                if (clickerList.PointInScope(clickParameters.Start, windowParam) && clickerList.PointInScope(clickParameters.End, windowParam))
                 {
                     fixedRecordList.Add(clickParameters);
                 }
@@ -79,7 +79,7 @@ namespace autoClicker
 
         private void showPoint(List<ClickParameters> recordList, string key = null, Point? sizeAfterRecord = null, bool? resize = false)
         {
-            Point? size = key!=null ? clickerList.WindowParams[key].Start : sizeAfterRecord;
+            Point? size = key != null ? clickerList.WindowParams[key].Start : sizeAfterRecord;
             WindowFinder.ForceAppWindowSize(AppName, size);
             if (resize.Value)
             {
@@ -114,15 +114,16 @@ namespace autoClicker
                 wasPressed = true;
                 clickRecord.Start = mouse.GetMousePosition();
                 clickRecord.WaitDurationTime = (int)DateTime.Now.Ticks;
-            } else if(!mouse.IsLpmPressed() && wasPressed)
+            }
+            else if (!mouse.IsLpmPressed() && wasPressed)
             {
                 wasPressed = false;
                 clickRecord.End = mouse.GetMousePosition();
-                clickRecord.WaitDurationTime = (int)(DateTime.Now.Ticks - clickRecord.WaitDurationTime)/10000;
+                clickRecord.WaitDurationTime = (int)(DateTime.Now.Ticks - clickRecord.WaitDurationTime) / 10000;
                 clickRecord.Slide = false;
                 clickRecord.WaitAfterTime = (int)DateTime.Now.Ticks;
                 clickToAdd = true;
-            } 
+            }
         }
 
         public void UpdatedPoint(List<ClickParameters> recordList)
@@ -168,7 +169,7 @@ namespace autoClicker
             timeOfExecutionExpired.Enabled = enabled;
             buttonRemoveClickList.Enabled = enabled;
             textBoxAppName.Enabled = enabled;
-            
+
         }
 
         private void textBoxAppName_Leave(object sender, EventArgs e)

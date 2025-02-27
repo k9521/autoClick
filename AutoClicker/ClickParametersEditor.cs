@@ -1,15 +1,8 @@
-﻿using autoClicker;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using Label = System.Windows.Forms.Label;
 
 
@@ -65,7 +58,7 @@ namespace autoClicker
         private void updatePoint(Control item, ClickParameters clickRecord)
         {
             var cordsSize = WindowFinder.GetWindowPosition(AppName);
-            if((clickRecord.Start.Value.X < 0 || clickRecord.Start.Value.Y < 0) ||
+            if ((clickRecord.Start.Value.X < 0 || clickRecord.Start.Value.Y < 0) ||
                 (clickRecord.End.Value.X < 0 || clickRecord.End.Value.Y < 0) ||
                 (clickRecord.Start.Value.X > cordsSize.Value.Right - cordsSize.Value.Left || clickRecord.Start.Value.Y > cordsSize.Value.Bottom - cordsSize.Value.Top) ||
                 (clickRecord.End.Value.X > cordsSize.Value.Right - cordsSize.Value.Left || clickRecord.End.Value.Y > cordsSize.Value.Bottom - cordsSize.Value.Top))
@@ -170,7 +163,7 @@ namespace autoClicker
                 Location = new Point(180, 0)
             };
             showPoints.CheckedChanged += (s, e) => targetForm.ShowPoints(showPoints.Checked);
-            
+
             buttonPanel.Controls.AddRange(new Control[] { addButton, saveButton, showPoints });
 
             itemsPanel = new Panel
@@ -207,7 +200,7 @@ namespace autoClicker
 
         private Control CreateItemControl(ClickParameters parameters)
         {
-            if(parameters.Start == null)
+            if (parameters.Start == null)
             {
                 parameters.Start = new Point(0, 0);
             }
@@ -225,9 +218,9 @@ namespace autoClicker
 
 
             AddXYLabels(group, ref yPos);
-            AddPointControl(group, "Start", parameters.Start, (p) => { parameters.Start = p; targetForm.UpdatedPoint(CreateList());}, ref yPos);
-            AddPointControl(group, "End", parameters.End, (p) => { parameters.End = p; targetForm.UpdatedPoint(CreateList());}, ref yPos);
-            AddNumericField(group, "RND Point", parameters.RNDPoint, v => { parameters.RNDPoint = v; targetForm.UpdatedPoint(CreateList());}, ref yPos);
+            AddPointControl(group, "Start", parameters.Start, (p) => { parameters.Start = p; targetForm.UpdatedPoint(CreateList()); }, ref yPos);
+            AddPointControl(group, "End", parameters.End, (p) => { parameters.End = p; targetForm.UpdatedPoint(CreateList()); }, ref yPos);
+            AddNumericField(group, "RND Point", parameters.RNDPoint, v => { parameters.RNDPoint = v; targetForm.UpdatedPoint(CreateList()); }, ref yPos);
 
             var slideCheck = new CheckBox
             {
@@ -241,10 +234,10 @@ namespace autoClicker
 
             AddNumericField(group, "Wait Duration", parameters.WaitDurationTime, v => parameters.WaitDurationTime = v, ref yPos);
             yPos -= 30;
-            AddNumericField(group, "RND Duration", parameters.WaitRNDDurationTime, v => parameters.WaitRNDDurationTime = v, ref yPos , 240);
+            AddNumericField(group, "RND Duration", parameters.WaitRNDDurationTime, v => parameters.WaitRNDDurationTime = v, ref yPos, 240);
             AddNumericField(group, "Wait After", parameters.WaitAfterTime, v => parameters.WaitAfterTime = v, ref yPos);
             yPos -= 30;
-            AddNumericField(group, "RND After Time", parameters.WaitRNDAfterTime, v => parameters.WaitRNDAfterTime = v, ref yPos , 240);
+            AddNumericField(group, "RND After Time", parameters.WaitRNDAfterTime, v => parameters.WaitRNDAfterTime = v, ref yPos, 240);
 
 
             var buttonPanel = new Panel
@@ -283,7 +276,7 @@ namespace autoClicker
                 Size = new Size(90, 25),
                 Location = new Point(0, 90)
             };
-            
+
             addAfterBtn.Click += (s, e) => AddItemRelative(group, false);
 
             buttonPanel.Controls.AddRange(new[] { showPoint, deleteButton, addBeforeBtn, addAfterBtn });
@@ -313,10 +306,11 @@ namespace autoClicker
 
         private void UpdateGroupNameComponent()
         {
-            foreach(var control in itemsPanel.Controls)
+            foreach (var control in itemsPanel.Controls)
             {
-                if(control.GetType() == typeof(GroupBox)){
-                    (control as GroupBox).Text = "Click Parameters: #" + (((control as GroupBox).Top/210)+1);
+                if (control.GetType() == typeof(GroupBox))
+                {
+                    (control as GroupBox).Text = "Click Parameters: #" + (((control as GroupBox).Top / 210) + 1);
                 }
             }
         }
@@ -365,7 +359,7 @@ namespace autoClicker
                 Location = new Point(240, yPos),
                 Enabled = true,
                 Minimum = 0,
-                Maximum= int.MaxValue,
+                Maximum = int.MaxValue,
                 Value = value?.Y ?? 0,
                 Tag = label + "Y"
             };
@@ -436,7 +430,7 @@ namespace autoClicker
             var key = keyTextBox.Text;
             if (string.IsNullOrWhiteSpace(key)) return;
 
-            if(clickerList == null)
+            if (clickerList == null)
             {
                 clickerList = new ClickerList("data");
             }

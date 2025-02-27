@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace autoClicker
@@ -103,7 +99,8 @@ namespace autoClicker
 
         public bool SimulateClick(Point? clientPos)
         {
-            if(clientPos == null) {
+            if (clientPos == null)
+            {
                 return false;
             }
             IntPtr hWnd = WindowFinder.FindWindow(null, AppName);
