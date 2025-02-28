@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="F4E142FD-B0CC-4FD0-A9F9-3105BCD80A01"
+			 Name="AutoClicker"
+			 Language="1033"
+			 Version="1.0.0.0"
+			 Manufacturer="KK"
+			 UpgradeCode="KK">
+
+		<Package InstallerVersion="200"
+				 Compressed="yes"
+				 InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+		<!-- Główne pliki -->
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="AutoClicker">
+
+					<!-- Główny plik EXE -->
+					<Component Id="MainExecutable" Guid="YOUR-GUID-1">
+						<File Source="$(var.AutoClicker.TargetPath)"
+							  KeyPath="yes"
+							  Checksum="yes"/>
+					</Component>
+
+					<!-- Plik konfiguracyjny -->
+					<Component Id="ConfigFile" Guid="6376AEF2-5638-478D-B6D4-377F4084A195">
+						<File Source="$(var.AutoClicker.TargetDir)AutoClicker.exe.config" />
+					</Component>
+
+					<!-- Ikona -->
+					<Component Id="IconFile" Guid="F9D16FF9-F832-4FB0-8F49-CD0A34331792">
+						<File Source="$(var.AutoClicker.ProjectDir)click_78398.ico" />
+					</Component>
+
+					<!-- Plik manifestu -->
+					<Component Id="ManifestFile" Guid="25BEB701-2E3C-4169-BD13-E3CAD4711430">
+						<File Source="$(var.AutoClicker.TargetDir)AutoClicker.exe.manifest" />
+					</Component>
+
+					<!-- PDB (opcjonalnie) -->
+					<Component Id="PdbFile" Guid="F5060E22-BDFD-4DB3-A75B-562825FDC142">
+						<File Source="$(var.AutoClicker.TargetDir)AutoClicker.pdb" />
+					</Component>
+
+				</Directory>
+			</Directory>
+
+			<!-- Skróty w menu Start i na pulpicie -->
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ProgramMenuSubfolder" Name="AutoClicker">
+					<Component Id="StartMenuShortcut" Guid="6C3A018E-C405-4033-99FD-7E00261F7360">
+						<Shortcut Id="StartMenuShortcut"
+								  Name="AutoClicker"
+								  Target="[INSTALLFOLDER]AutoClicker.exe"
+								  WorkingDirectory="INSTALLFOLDER"/>
+						<RemoveFolder Id="ProgramMenuSubfolder" On="uninstall"/>
+					</Component>
+				</Directory>
+			</Directory>
+
+			<Directory Id="DesktopFolder" Name="Desktop">
+				<Component Id="DesktopShortcut" Guid="B2501311-9DBA-4057-8F1A-E6FD1D7A54D8">
+					<Shortcut Id="DesktopShortcut"
+							  Name="AutoClicker"
+							  Target="[INSTALLFOLDER]AutoClicker.exe"
+							  WorkingDirectory="INSTALLFOLDER"/>
+				</Component>
+			</Directory>
+		</Directory>
+
+		<!-- Funkcje instalatora -->
+		<Feature Id="MainFeature" Title="Main Components" Level="1">
+			<ComponentRef Id="MainExecutable" />
+			<ComponentRef Id="ConfigFile" />
+			<ComponentRef Id="IconFile" />
+			<ComponentRef Id="ManifestFile" />
+			<ComponentRef Id="PdbFile" />
+		</Feature>
+
+		<Feature Id="Shortcuts" Title="Shortcuts" Level="1">
+			<ComponentRef Id="StartMenuShortcut" />
+			<ComponentRef Id="DesktopShortcut" />
+		</Feature>
+
+		<!-- UI instalatora -->
+		<UIRef Id="WixUI_Mondo" />
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+	</Product>
+</Wix>
