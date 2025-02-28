@@ -3,8 +3,7 @@
 	<Package Name="AutoClicker"
 			 Manufacturer="YourCompany"
 			 Version="1.0.0.0"
-			 UpgradeCode="8ABC3690-897A-4ED5-BF43-8C8255A438FE" <!-- Zastąp prawdziwym GUID -->
-		Compressed="yes">
+			 UpgradeCode="8ABC3690-897A-4ED5-BF43-8C8255A438FE" Compressed="yes">
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
 		<MediaTemplate EmbedCab="yes" />
