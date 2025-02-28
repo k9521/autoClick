@@ -33,10 +33,11 @@ jobs:
     # Build całego rozwiązania (w tym projektu WiX)
     - name: Build Solution
       run: msbuild $env:Solution_Name /p:Configuration=Release /p:Platform="Any CPU"
+      
 
     # Budowa MSI z dokładnym wskazaniem ścieżki
     - name: Build MSI Installer
-      run: msbuild "$env:Wix_Project_Path" /p:Configuration=Release /p:OutputPath=bin/Release
+      run: msbuild "$env:Wix_Project_Path" /p:Configuration=Release /p:WixToolsetPath="C:\Program Files\WiX Toolset v4.0\bin"
 
     # Weryfikacja wygenerowanych plików
     - name: List MSI Artifacts
