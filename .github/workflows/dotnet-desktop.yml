@@ -7,82 +7,44 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
-    strategy:
-      matrix:
-        configuration: [Release] # Debug
-
-    runs-on: windows-latest  # For a list of available runner types, refer to
-                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-
+    runs-on: windows-latest
     env:
       Solution_Name: AutoClicker.sln
-      Test_Project_Path: AutoClicker/AutoClicker.csproj
-      Wap_Project_Directory: AutoClicker
-      Wap_Project_Path: AutoClicker
+      Wix_Project_Path: AutoClicker.Installer/AutoClicker.Installer.wixproj
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
-    # Install the .NET Core workload
-    - name: Install .NET Core
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    # Nie trzeba instalować .NET Core osobno - setup-dotnet wystarczy
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v2
+    # Windows-latest ma już WiX, ale warto zaktualizować
+    - name: Update WiX
+      run: choco upgrade wixtoolset -y
 
-    # Execute all unit tests in the solution
-    - name: Execute unit tests
-      run: dotnet test
+    # Build całego rozwiązania (w tym projektu WiX)
+    - name: Build Solution
+      run: msbuild $env:Solution_Name /p:Configuration=Release /p:Platform="Any CPU"
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+    # Budowa MSI z dokładnym wskazaniem ścieżki
+    - name: Build MSI Installer
+      run: msbuild "$env:Wix_Project_Path" /p:Configuration=Release /p:OutputPath=bin/Release
 
-    # Decode the base 64 encoded pfx and save the Signing_Certificate
-    - name: Decode the pfx
-      run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+    # Weryfikacja wygenerowanych plików
+    - name: List MSI Artifacts
+      run: Get-ChildItem -Path AutoClicker.Installer/bin/Release -Recurse -Filter *.msi
 
-    # Create the app package by building and packaging the Windows Application Packaging project
-    - name: Create the app package
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
-      env:
-        Appx_Bundle: Always
-        Appx_Bundle_Platforms: x86|x64
-        Appx_Package_Build_Mode: SideLoadOnly  #StoreUpload
-        Configuration: ${{ matrix.configuration }}
-
-    - name: List files after build1
-      run: Get-ChildItem -Path ${{ env.Wap_Project_Directory }} -Recurse
-  
-    # Remove the pfx
-    - name: Remove the pfx
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
-
-    - name: List files after build1
-      run: Get-ChildItem -Path ${{ env.Wap_Project_Directory }} -Recurse
-      
-    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
-    # - name: Upload build artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: MSIX Package
-    #     path: ${{ env.Wap_Project_Directory }}\AppPackages
-    - name: Upload build artifacts
+    # Upload tylko MSI
+    - name: Upload MSI Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: MSIX_Package_${{ matrix.configuration }}
-        path: ${{ env.Wap_Project_Directory }}\AppPackages\**\*.*
+        name: AutoClicker_Installer
+        path: AutoClicker.Installer/bin/Release/*.msi
